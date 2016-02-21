@@ -17,6 +17,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        if User.currentUser != nil {
+            print("There is a current User")
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewControllerWithIdentifier("TweetsNavigationController")
+            window?.rootViewController = vc
+            
+        } else {
+            print("There is no current user")
+        }
+        NSNotificationCenter.defaultCenter().addObserverForName(User.userDidLogoutNotification, object: nil, queue: NSOperationQueue.mainQueue()) { (NSNotification) -> Void in
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateInitialViewController()
+            self.window?.rootViewController = vc
+        }
+        
         return true
     }
 
@@ -41,28 +57,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+    
+    //When app switches into your app, you need this so it can handle the action "cptwitterdemo"
+    func application(application: UIApplication, openURL url: NSURL, options: [String: AnyObject]) -> Bool {
+       // print(url.description)
         
-        TwitterClient.sharedInstance.fetchAccessTokenWithPath("oauth/access_token", method: "POST", requestToken: BDBOAuth1Credential (queryString: url.query), success: { (accessToken: BDBOAuth1Credential!) -> Void in
-                print("Got the access token!")
-                TwitterClient.sharedInstance.requestSerializer.saveAccessToken(accessToken)
-            
-            TwitterClient.sharedInstance.GET("1.1/account/verify_credentials.json", parameters: nil, success: { (operation: NSURLSessionDataTask!, response: AnyObject?) -> Void in
-                    print("User: \(response)")
-            }, failure: {(operation: NSURLSessionDataTask?, error: NSError!) -> Void in
-                    print("Error getting current user")
-            })
-            
-            TwitterClient.sharedInstance.GET("1.1/statuses/home_timeline.json", parameters: nil, success: { (operations: NSURLSessionDataTask!, response: AnyObject?) -> Void in
-                    print("Home_Timeline: \(response)")
-                }, failure: { (operation: NSURLSessionDataTask?, error: NSError!) -> Void in
-                    print("Error getting Home_Timeline")
-            })
-            
-            }) { (error : NSError!) -> Void in
-                print("Failed to receive access token")
-            }
-            return true
+        TwittersClient.sharedInstance.handleOpenUrl(url)
+        
+        return true
         }
 
 

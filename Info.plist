@@ -24,7 +24,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>$</string>
+			<string>Arnold-Ballesteros.Twitter</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>cptwitterdemo</string>
