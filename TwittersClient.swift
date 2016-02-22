@@ -36,7 +36,29 @@ class TwittersClient: BDBOAuth1SessionManager {
         }
 
     }
+    
+    func retweet(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("1.1/statuses/retweet/\(params!["id"] as! Int).json", parameters: params, success: { (operation: NSURLSessionDataTask!, response: AnyObject?) -> Void in
+            var tweet = Tweet.tweetAsDictionary(response as! NSDictionary)
+            print("retweeted")
+            completion(tweet: tweet, error: nil)
+            }) { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
+                
+                completion(tweet: nil, error: error)
+        }
+    }
 
+    func like(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("1.1/favorites/create.json", parameters: params, success: { (operation: NSURLSessionDataTask, response: AnyObject?) -> Void in
+            var tweet = Tweet.tweetAsDictionary(response as! NSDictionary)
+            print("liked tweet")
+            completion(tweet: tweet, error: nil)
+            }) { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
+                completion(tweet: nil, error: error)
+                
+        }
+    }
+    
     func homeTimeline(success: ([Tweet]) -> (), failure: (NSError) -> ()) {
     
         

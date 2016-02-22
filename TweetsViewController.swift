@@ -88,6 +88,37 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
     }
 
 
+    @IBAction func retweetButtonClicked(sender: AnyObject) {
+        
+                print("Retweet button triggered")
+        
+                var subviewPostion: CGPoint = sender.convertPoint(CGPointZero, toView: self.tableView)
+        
+                var indexPath: NSIndexPath = self.tableView.indexPathForRowAtPoint(subviewPostion)!
+        
+                let cell =  self.tableView.cellForRowAtIndexPath(indexPath)! as! TweetsCell
+        
+        
+        
+                let tweet = tweets![indexPath.row]
+        
+                let tweetID = tweet.id
+        
+                TwittersClient.sharedInstance.retweet(["id": tweetID!]) { (tweet, error) -> () in
+        
+                    if (tweet != nil) {
+                        print("Retweet Acheived")
+        
+                        var indexPath = NSIndexPath(forRow: indexPath.row, inSection: 0)
+                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
+        
+                    }
+                    else {
+                        print("Retweet Error")
+                    }
+                }
+    }
+    
     /*
     // MARK: - Navigation
 
