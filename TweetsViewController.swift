@@ -27,7 +27,7 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
       
         TwittersClient.sharedInstance.homeTimeline({ (tweets: [Tweet]) -> () in
             self.tweets = tweets
-        //    self.tableView.reloadData()
+            //self.tableView.reloadData()
             for tweet in tweets {
                 print(tweet.text)
                 
@@ -58,7 +58,7 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("Number of Rows Initializing")
-        if let tweets = tweets {
+        if let tweets = self.tweets {
             print("Rows Initialized!")
             return tweets.count
         } else {
