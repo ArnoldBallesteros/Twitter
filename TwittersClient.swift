@@ -51,19 +51,7 @@ class TwittersClient: BDBOAuth1SessionManager {
         })
 
     }
-    /*
-    func homeTimelineWithCompletion(params: NSDictionary?, completion: (tweets: [Tweet]?, error: NSError?) -> ()) {
-        GET("1.1/statuses/home_timeline.json", parameters: params, progress: nil, success: { (operation: NSURLSessionDataTask, response: AnyObject?) -> Void in
-            let tweet = Tweet.tweetsWithArray((response as? [NSDictionary])!)
-            
-            completion(tweets: tweet, error: nil)
-            
-            }) { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
-                print("error: \(error)")
-                completion(tweets: nil, error: error)
-        }
-    }
-    */
+    
     func currentAccount(success: (User) -> (), failure: (NSError) -> ()) {
         GET("1.1/account/verify_credentials.json", parameters: nil, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
             

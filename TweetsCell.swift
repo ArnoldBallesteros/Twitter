@@ -23,7 +23,7 @@ class TweetsCell: UITableViewCell {
             timeStampLabel.text = tweet.createdAtString as? String
             nameLabel.text = tweet.user!.name as? String
             profileImageView.setImageWithURL(tweet.user!.profileImageUrl!)
-            handleLabel.text = tweet.user!.screenname as? String
+            handleLabel.text = "@\(tweet.user!.screenname!)" as? String
         }
     }
     
@@ -33,8 +33,13 @@ class TweetsCell: UITableViewCell {
         //Rounded Corners Profile
         profileImageView.layer.cornerRadius = 5
         profileImageView.clipsToBounds = true
-        
         nameLabel.preferredMaxLayoutWidth = nameLabel.frame.size.width
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        nameLabel.preferredMaxLayoutWidth = nameLabel.frame.size.width
+
     }
 
     override func setSelected(selected: Bool, animated: Bool) {

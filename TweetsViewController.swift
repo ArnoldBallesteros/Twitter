@@ -13,21 +13,34 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
     @IBOutlet weak var tableView: UITableView!
 
     var tweets: [Tweet]!
+    var refreshControl = UIRefreshControl!()
+
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Logo on Navigation Bar
+        let logo = UIImage(named: "TwitterLogoWhite.png")
+        let imageView = UIImageView(image:logo)
+        self.navigationItem.titleView = imageView
+        
+
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: "refreshControlAction:", forControlEvents: UIControlEvents.ValueChanged)
+        tableView.insertSubview(refreshControl, atIndex: 0)
 
         // Do any additional setup after loading the view.
         //Table View Setup
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 120
-      
+        tableView.estimatedRowHeight = 150
+        
         TwittersClient.sharedInstance.homeTimeline({ (tweets: [Tweet]) -> () in
             self.tweets = tweets
-            //self.tableView.reloadData()
+            self.tableView.reloadData()
+           
             for tweet in tweets {
                 print(tweet.text)
                 
@@ -36,14 +49,6 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
                 print("Tweet Error: \(error.localizedDescription)")
         }
 
-        /*
-        TwittersClient.sharedInstance.homeTimelineWithCompletion(nil) { (tweets, error) -> () in
-            if (tweets != nil) {
-                self.tweets = tweets
-                self.tableView.reloadData()
-            }
-        }
-        */
     }
     
     
@@ -56,11 +61,16 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
         TwittersClient.sharedInstance.logout()
     }
     
+    func refreshControlAction(refreshControl: UIRefreshControl) {
+        self.tableView.reloadData()
+        
+        refreshControl.endRefreshing()
+    }
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("Number of Rows Initializing")
-        if let tweets = self.tweets {
+        if tweets != nil {
             print("Rows Initialized!")
-            return tweets.count
+            return tweets!.count
         } else {
             print("Rows failed to initialize")
             return 0
@@ -72,7 +82,7 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
         
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetsCell", forIndexPath: indexPath) as! TweetsCell
         
-        cell.tweet = tweets[indexPath.row]
+        cell.tweet = tweets![indexPath.row]
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         return cell
     }
