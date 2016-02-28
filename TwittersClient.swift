@@ -36,29 +36,7 @@ class TwittersClient: BDBOAuth1SessionManager {
         }
 
     }
-    
-    func retweet(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
-        POST("1.1/statuses/retweet/\(params!["id"] as! Int).json", parameters: params, success: { (operation: NSURLSessionDataTask!, response: AnyObject?) -> Void in
-            var tweet = Tweet.tweetAsDictionary(response as! NSDictionary)
-            print("retweeted")
-            completion(tweet: tweet, error: nil)
-            }) { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
-                
-                completion(tweet: nil, error: error)
-        }
-    }
 
-    func like(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
-        POST("1.1/favorites/create.json", parameters: params, success: { (operation: NSURLSessionDataTask, response: AnyObject?) -> Void in
-            var tweet = Tweet.tweetAsDictionary(response as! NSDictionary)
-            print("liked tweet")
-            completion(tweet: tweet, error: nil)
-            }) { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
-                completion(tweet: nil, error: error)
-                
-        }
-    }
-    
     func homeTimeline(success: ([Tweet]) -> (), failure: (NSError) -> ()) {
     
         
@@ -91,6 +69,45 @@ class TwittersClient: BDBOAuth1SessionManager {
 
     
     }
+    /*
+    func createTweet(tweet:String,param: NSDictionary!, success: (User) -> (), failure: (NSError) -> ()) {
+        POST("1.1/statuses/update.json?status=\(tweet)", parameters: param, constructingBodyWithBlock: nil, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+           
+            let tweetDictionary = response as! NSDictionary
+            var updateTweet = Tweet(dictionary: tweetDictionary)
+            
+            }, failure: { (task: NSURLSessionDataTask?, error:NSError) -> Void in
+            print("New Tweet Error : \(error.localizedDescription)")
+            failure(error)
+        })
+    }
+    */
+    func tweetWithCompletion(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        
+        POST("1.1/statuses/update.json?status=\(params!["status"] as! String)", parameters: params, success: { (operation: NSURLSessionDataTask, response: AnyObject?) -> Void in
+            
+            var tweet = Tweet.tweetAsDictionary(response as! NSDictionary)
+            
+            
+            completion(tweet: tweet, error: nil)
+            
+            }) { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
+                print("ERROR: \(error)")
+                completion(tweet: nil, error: error)
+        }
+    }
+    func replyTweet(tweet:String, tweetID: Int, success: (User) -> () , failure: (NSError) -> ()) {
+        var params = [String : AnyObject]()
+        params["status"] = tweet
+        params["in_reply_to_status-id"] = tweetID
+        POST("1.1/statuses/update.json?in_reply_to_status_id=\(tweetID)&status=\(tweet)", parameters: params, constructingBodyWithBlock: nil, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+            let tweetDictionary = response as! NSDictionary
+            var updateTweet = Tweet(dictionary: tweetDictionary)
+            }, failure: { (task: NSURLSessionDataTask?, error:NSError) -> Void in
+            print("Reply Error : \(error.localizedDescription)")
+        })
+        
+    }
     
     func login(success: () -> (), failure: (NSError) -> ()) {
         loginSuccess = success
@@ -117,10 +134,14 @@ class TwittersClient: BDBOAuth1SessionManager {
         }
     }
     
+    
+    
     func logout() {
         User.currentUser = nil
         deauthorize()
         
          NSNotificationCenter.defaultCenter().postNotificationName(User.userDidLogoutNotification, object: nil)
     }
+    
+    
 }

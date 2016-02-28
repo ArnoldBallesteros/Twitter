@@ -1,4 +1,4 @@
-//
+    	//
 //  TweetsViewController.swift
 //  Twitter
 //
@@ -12,7 +12,7 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
     
     @IBOutlet weak var tableView: UITableView!
 
-    var tweets: [Tweet]!
+    var tweets: [Tweet]?
     var refreshControl = UIRefreshControl!()
 
     
@@ -47,7 +47,7 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
             }
             }) { (error: NSError) -> () in
                 print("Tweet Error: \(error.localizedDescription)")
-        }
+        }		
 
     }
     
@@ -84,49 +84,68 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
         
         cell.tweet = tweets![indexPath.row]
         cell.selectionStyle = UITableViewCellSelectionStyle.None
+        
+//        TweetsCell.retweetButtonActivated.setImage(UIImage(named: "retweet-action.png") as UIImage, forState: .Normal)
+
         return cell
     }
 
-
-    @IBAction func retweetButtonClicked(sender: AnyObject) {
-        
-                print("Retweet button triggered")
-        
-                var subviewPostion: CGPoint = sender.convertPoint(CGPointZero, toView: self.tableView)
-        
-                var indexPath: NSIndexPath = self.tableView.indexPathForRowAtPoint(subviewPostion)!
-        
-                let cell =  self.tableView.cellForRowAtIndexPath(indexPath)! as! TweetsCell
-        
-        
-        
-                let tweet = tweets![indexPath.row]
-        
-                let tweetID = tweet.id
-        
-                TwittersClient.sharedInstance.retweet(["id": tweetID!]) { (tweet, error) -> () in
-        
-                    if (tweet != nil) {
-                        print("Retweet Acheived")
-        
-                        var indexPath = NSIndexPath(forRow: indexPath.row, inSection: 0)
-                        self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Top)
-        
-                    }
-                    else {
-                        print("Retweet Error")
-                    }
-                }
-    }
     
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+      /* let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPathForCell(cell)
+        let tweet = tweets![indexPath!.row]
+        
+        let tweetsDetailViewController = segue.destinationViewController as! TweetsDetailViewController
+       
+        tweetsDetailViewController.tweet = tweet
+      */
+        
+        let chosenNavigationController = segue.destinationViewController
+        
+        
+        if chosenNavigationController is TweetingViewController {
+            let tweetingViewController = chosenNavigationController as! TweetingViewController
+            tweetingViewController
+            print("Pushed to Tweeting View")
+        } else
+        if chosenNavigationController is TweetsDetailViewController {
+            let cell = sender as! UITableViewCell
+            let indexPath = tableView.indexPathForCell(cell)
+            let tweet = tweets![indexPath!.row]
+            let tweetsDetailViewController = chosenNavigationController as! TweetsDetailViewController
+            tweetsDetailViewController.tweet = tweet
+            print("Pushed to Tweets Details")
+        } else {
+            let detailViewController = chosenNavigationController as! DetailViewController
+            print("Pushed to Profile/Detail VIew")
+           
+            let cell = sender as! UITableViewCell
+            let indexPath = tableView.indexPathForCell(cell)
+            let tweet = tweets![indexPath!.row]
+            detailViewController.tweet = tweet
+        }
+        
+        
+        /*
+        
+        let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPathForCell(cell)
+        let tweet = tweets![indexPath!.row]
+        
+        let detailViewController = segue.destinationViewController as! DetailViewController
+        
+        detailViewController.tweet = tweet
+        */
+        
+        print("segue called")
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+    
 
 }
