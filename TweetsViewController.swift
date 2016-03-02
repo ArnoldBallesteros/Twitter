@@ -90,8 +90,15 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
         return cell
     }
 
+    @IBAction func onTapDetail(sender: AnyObject) {
+        self.performSegueWithIdentifier("profile", sender: nil)
+    }
     
     
+    
+    @IBAction func onTapProfile(sender: AnyObject) {
+        self.performSegueWithIdentifier("profile", sender: nil)
+    }
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -107,7 +114,6 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
         
         let chosenNavigationController = segue.destinationViewController
         
-        
         if chosenNavigationController is TweetingViewController {
             let tweetingViewController = chosenNavigationController as! TweetingViewController
             tweetingViewController
@@ -121,14 +127,19 @@ class TweetsViewController: UIViewController,UITableViewDataSource,UITableViewDe
             tweetsDetailViewController.tweet = tweet
             print("Pushed to Tweets Details")
         } else {
+        if chosenNavigationController is DetailViewController {
             let detailViewController = chosenNavigationController as! DetailViewController
+            
             print("Pushed to Profile/Detail VIew")
            
             let cell = sender as! UITableViewCell
             let indexPath = tableView.indexPathForCell(cell)
             let tweet = tweets![indexPath!.row]
             detailViewController.tweet = tweet
+            }
         }
+        
+        
         
         
         /*

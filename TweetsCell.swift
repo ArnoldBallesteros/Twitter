@@ -29,6 +29,7 @@ class TweetsCell: UITableViewCell {
     
     let like = UIImage(named: "like-action.png") as UIImage!
     
+    
     var retweetActive: Bool = false
     var likeActive: Bool = false
    

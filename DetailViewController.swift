@@ -20,6 +20,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var nameLabel: UILabel!
     
     var tweet: Tweet!
+   
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -27,15 +28,7 @@ class DetailViewController: UIViewController {
             profileImage.setImageWithURL(tweet.user!.profileImageUrl!)
             handleLabel.text = "@\(tweet.user!.screenname!)" as? String
                 
-            }
-    
-
-                
-                
-
-    
-        
-        
+    }   
 
         // Do any additional setup after loading the view.
     
